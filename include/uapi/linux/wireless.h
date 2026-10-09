@@ -76,6 +76,12 @@
 
 #include <stddef.h>                     /* for offsetof */
 
+#ifdef __KERNEL__
+#	include <linux/stddef.h>	/* for offsetof */
+#else
+#	include <stddef.h>		/* for offsetof */
+#endif
+
 /***************************** VERSION *****************************/
 /*
  * This constant is used to know the availability of the wireless

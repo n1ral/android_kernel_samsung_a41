@@ -3461,7 +3461,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
 	case BPF_ADD:
 		ret = sanitize_ptr_alu(env, insn, ptr_reg, dst_reg, smin_val < 0);
 		if (ret < 0) {
-			verbose("R%d tried to add from different maps or paths\n", dst);
+			verbose(env, "R%d tried to add from different maps or paths\n", dst);
 			return ret;
 		}
 		/* We can take a fixed offset as long as it doesn't overflow
@@ -3516,7 +3516,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
 	case BPF_SUB:
 		ret = sanitize_ptr_alu(env, insn, ptr_reg, dst_reg, smin_val < 0);
 		if (ret < 0) {
-			verbose("R%d tried to sub from different maps or paths\n", dst);
+			verbose(env, "R%d tried to sub from different maps or paths\n", dst);
 			return ret;
 		}
 		if (dst_reg == off_reg) {
@@ -3587,7 +3587,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
 		return -EACCES;
 	case PTR_TO_MAP_VALUE:
 		if (!env->allow_ptr_leaks && !known && (smin_val < 0) != (smax_val < 0)) {
-			verbose("R%d has unknown scalar with mixed signed bounds, pointer arithmetic with it prohibited for !root\n",
+			verbose(env, "R%d has unknown scalar with mixed signed bounds, pointer arithmetic with it prohibited for !root\n",
 				off_reg == dst_reg ? dst : src);
 			return -EACCES;
 		}
@@ -3612,13 +3612,13 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
 	if (!env->allow_ptr_leaks) {
 		if (dst_reg->type == PTR_TO_MAP_VALUE &&
 		    check_map_access(env, dst, dst_reg->off, 1)) {
-			verbose("R%d pointer arithmetic of map value goes out of range, "
+			verbose(env, "R%d pointer arithmetic of map value goes out of range, "
 				"prohibited for !root\n", dst);
 			return -EACCES;
 		} else if (dst_reg->type == PTR_TO_STACK &&
 			   check_stack_access(env, dst_reg, dst_reg->off +
 					      dst_reg->var_off.value, 1)) {
-			verbose("R%d stack pointer arithmetic goes out of range, "
+			verbose(env, "R%d stack pointer arithmetic goes out of range, "
 				"prohibited for !root\n", dst);
 			return -EACCES;
 		}
@@ -3680,7 +3680,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
 	case BPF_ADD:
 		ret = sanitize_val_alu(env, insn);
 		if (ret < 0) {
-			verbose("R%d tried to add from different pointers or scalars\n", dst);
+			verbose(env, "R%d tried to add from different pointers or scalars\n", dst);
 			return ret;
 		}
 		if (signed_add_overflows(dst_reg->smin_value, smin_val) ||
@@ -3704,7 +3704,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
 	case BPF_SUB:
 		ret = sanitize_val_alu(env, insn);
 		if (ret < 0) {
-			verbose("R%d tried to sub from different pointers or scalars\n", dst);
+			verbose(env, "R%d tried to sub from different pointers or scalars\n", dst);
 			return ret;
 		}
 		if (signed_sub_overflows(dst_reg->smin_value, smax_val) ||
