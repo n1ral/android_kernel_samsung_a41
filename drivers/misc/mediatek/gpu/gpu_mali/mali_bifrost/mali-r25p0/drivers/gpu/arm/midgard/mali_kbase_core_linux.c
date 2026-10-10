@@ -1787,10 +1787,7 @@ static long __kbase_ioctl(struct file *filp, unsigned int cmd, unsigned long arg
 
 long kbase_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
-	struct pm_qos_request req = {
-		.type = PM_QOS_REQ_AFFINE_CORES,
-		.cpus_affine = ATOMIC_INIT(BIT(raw_smp_processor_id()))
-	};
+	struct pm_qos_request req = { };
 	long ret;
 
 	pm_qos_add_request(&req, PM_QOS_CPU_DMA_LATENCY, 100);
