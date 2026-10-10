@@ -1384,6 +1384,7 @@ headers_install: __headers
 	  $(error Headers not exportable for the $(SRCARCH) architecture))
 	$(Q)$(MAKE) $(hdr-inst)=include/uapi dst=include
 	$(Q)$(MAKE) $(hdr-inst)=arch/$(hdr-arch)/include/uapi $(hdr-dst)
+	$(Q)rm -rf $(objtree)/usr/include/asm $(objtree)/usr/include/asm-generic
 
 PHONY += headers_check_all
 headers_check_all: headers_install_all
