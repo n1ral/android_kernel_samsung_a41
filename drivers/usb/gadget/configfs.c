@@ -394,6 +394,8 @@ static ssize_t gadget_dev_desc_UDC_store(struct config_item *item,
 		list_for_each_entry(c, &gi->cdev.configs, list) {
 			cfg = container_of(c, struct config_usb_cfg, c);
 			list_for_each_entry_safe(f, tmp, &cfg->func_list, list) {
+				if (!f->name)
+					continue;
 				f_name_length = strlen(f->name);
 				if (f_name_length > 3)
 					f_name_length = 3;
@@ -408,7 +410,8 @@ static ssize_t gadget_dev_desc_UDC_store(struct config_item *item,
 				length += 1;
 				strcat(usb_mode,",");
 			}
-			usb_mode[length-1] = 0;
+			if (length)
+				usb_mode[length-1] = 0;
 			pr_info("usb: %s : usb_mode = %s\n", __func__, usb_mode);
 			store_usblog_notify(NOTIFY_USBMODE_EXTRA, (void *)usb_mode, NULL);
 		}
